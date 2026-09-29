@@ -1,4 +1,4 @@
-/* Zustand der App (Bewerbungen, Aufgaben, Unterlagen, Einstellungen) im localStorage. */
+/* Zustand der App (Bewerbungen, Unterlagen, Einstellungen) im localStorage. */
 (function (root) {
   'use strict';
 
@@ -6,64 +6,66 @@
 
   const STATUSES = [
     { key: 'idee', label: 'Interessant', tone: '' },
-    { key: 'recherche', label: 'Infos eingeholt', tone: 'accent' },
-    { key: 'vorbereitung', label: 'Unterlagen in Arbeit', tone: 'warn' },
     { key: 'beworben', label: 'Beworben', tone: 'accent' },
-    { key: 'gespraech', label: 'Gespräch / Hospitation', tone: 'warn' },
+    { key: 'gespraech', label: 'Gespräch', tone: 'warn' },
     { key: 'zusage', label: 'Zusage', tone: 'good' },
-    { key: 'absage', label: 'Absage / verworfen', tone: 'bad' }
+    { key: 'absage', label: 'Absage', tone: 'bad' }
   ];
+  // Ältere Status aus Version 1 auf die neuen abbilden.
+  const OLD_STATUS = { recherche: 'idee', vorbereitung: 'idee' };
 
   const DEFAULT_UNTERLAGEN = [
-    { name: 'Lebenslauf (tabellarisch, aktuell)', notiz: 'Mit Datum und Unterschrift. Praktika und Ehrenamt mit Kindern/Jugendlichen hervorheben.' },
-    { name: 'Anschreiben / Motivationsschreiben', notiz: 'Für jede Schule bzw. jeden Träger anpassen: Warum dieser Beruf, warum dort?' },
-    { name: 'Schulzeugnisse (Abschluss- bzw. letztes Halbjahreszeugnis)', notiz: 'Viele Schulen wollen beglaubigte Kopien, das geht z. B. bei der Schule oder im Bürgeramt.' },
-    { name: 'Nachweise über Praktika / Erfahrung', notiz: 'Praktikumsbescheinigungen, FSJ/BFD, Jugendarbeit, Babysitten mit Bestätigung.' },
-    { name: 'Erweitertes Führungszeugnis', notiz: 'Beim Bürgeramt oder online beim Bundesamt für Justiz beantragen. Dafür braucht man meist ein Aufforderungsschreiben der Schule oder Einrichtung. Darf bei Abgabe oft nicht älter als 3 Monate sein.' },
-    { name: 'Nachweis Masernschutz', notiz: 'Impfpass (Kopie) oder ärztliche Bescheinigung. Pflicht für die Arbeit in Kitas und Schulen.' },
-    { name: 'Personalausweis (Kopie)', notiz: '' },
-    { name: 'Bewerbungsfoto (optional)', notiz: 'In Deutschland nicht Pflicht, aber oft gern gesehen.' }
-  ];
-
-  const DEFAULT_AUFGABEN = [
-    'Im Ranking die Gewichte einstellen und die Top 3 anschauen',
-    'Wohnort auf der Karte setzen, damit Entfernungen stimmen',
-    'Infoabende / Tage der offenen Tür der Top-Schulen raussuchen',
-    'Impfpass auf Masernimpfung prüfen',
-    'Zeugnisse raussuchen und beglaubigte Kopien machen lassen',
-    'Lebenslauf aktualisieren'
+    { name: 'Lebenslauf', notiz: '' },
+    { name: 'Anschreiben', notiz: 'Für jede Bewerbung kurz anpassen.' },
+    { name: 'Zeugnisse (Kopien)', notiz: '' },
+    { name: 'Praktikumsnachweise', notiz: '' },
+    { name: 'Erweitertes Führungszeugnis', notiz: 'Beim Bürgeramt beantragen, dauert 1–2 Wochen.' },
+    { name: 'Nachweis Masernschutz', notiz: 'Kopie vom Impfpass.' }
   ];
 
   function freshState() {
     return {
-      version: 1,
+      version: 2,
       home: null,
       weights: root.Ranking ? root.Ranking.defaultWeights() : {},
-      filters: { berufe: [], formen: [], kategorie: 'alle', maxKm: 0 },
+      beruf: 'Erzieher/in',
+      kitas: { an: false, traeger: '', konzept: '' },
       bewerbungen: [],
-      unterlagen: DEFAULT_UNTERLAGEN.map((u) => ({ id: root.Util.uid(), name: u.name, notiz: u.notiz, status: 'offen' })),
-      aufgaben: DEFAULT_AUFGABEN.map((t) => ({ id: root.Util.uid(), text: t, faellig: '', erledigt: false })),
-      trackerView: 'board',
-      rechner: null,
-      profil: { abschluss: '', ausbildung: false, praktikum: false },
-      kitaLayer: { an: false, traeger: [], konzept: [], typ: [] }
+      unterlagen: DEFAULT_UNTERLAGEN.map((u) => ({ id: root.Util.uid(), name: u.name, notiz: u.notiz, fertig: false })),
+      profil: { abschluss: '' },
+      geldJahre: 5
     };
   }
 
   function normalize(raw) {
     const base = freshState();
     if (!raw || typeof raw !== 'object') return base;
-    const s = Object.assign(base, raw);
-    s.weights = Object.assign(root.Ranking ? root.Ranking.defaultWeights() : {}, raw.weights || {});
-    s.filters = Object.assign(base.filters, raw.filters || {});
-    s.profil = Object.assign(base.profil, raw.profil || {});
-    s.kitaLayer = Object.assign(base.kitaLayer, raw.kitaLayer || {});
-    for (const key of ['bewerbungen', 'unterlagen', 'aufgaben']) if (!Array.isArray(s[key])) s[key] = [];
-    s.bewerbungen = s.bewerbungen.map((b) => Object.assign({
-      id: root.Util.uid(), institutionId: null, angebotIndex: null, name: '', bildungsgang: '', status: 'idee',
-      frist: '', beworbenAm: '', gespraechAm: '', kontaktName: '', kontaktTel: '', kontaktMail: '',
-      notizen: '', bewertung: 0, unterlagen: {}, verlauf: [], erstellt: root.Util.todayIso()
-    }, b));
+    const s = base;
+    if (raw.home) s.home = raw.home;
+    if (typeof raw.beruf === 'string') s.beruf = raw.beruf;
+    if (raw.kitas && typeof raw.kitas === 'object') s.kitas = Object.assign(base.kitas, raw.kitas);
+    if (raw.profil && raw.profil.abschluss) s.profil.abschluss = raw.profil.abschluss;
+    if (raw.geldJahre) s.geldJahre = Number(raw.geldJahre) || 5;
+    const w = raw.weights || {};
+    for (const k of Object.keys(s.weights)) if (typeof w[k] === 'number') s.weights[k] = w[k];
+    if (Array.isArray(raw.unterlagen)) {
+      s.unterlagen = raw.unterlagen.map((u) => ({
+        id: u.id || root.Util.uid(), name: u.name || '', notiz: u.notiz || '',
+        fertig: u.fertig === true || u.status === 'fertig'
+      }));
+    }
+    if (Array.isArray(raw.bewerbungen)) {
+      s.bewerbungen = raw.bewerbungen.map((b) => {
+        const kontakt = b.kontakt !== undefined ? b.kontakt : [b.kontaktName, b.kontaktTel, b.kontaktMail].filter(Boolean).join(', ');
+        return {
+          id: b.id || root.Util.uid(), institutionId: b.institutionId || null,
+          angebotIndex: typeof b.angebotIndex === 'number' ? b.angebotIndex : null,
+          name: b.name || '', bildungsgang: b.bildungsgang || '',
+          status: OLD_STATUS[b.status] || (STATUSES.some((x) => x.key === b.status) ? b.status : 'idee'),
+          frist: b.frist || '', gespraechAm: b.gespraechAm || '', kontakt: kontakt || '', notizen: b.notizen || ''
+        };
+      });
+    }
     return s;
   }
 
@@ -119,5 +121,5 @@
     return s ? s.label : key;
   }
 
-  root.Store = { STATUSES, get, load, save, update, subscribe, exportJson, importJson, statusLabel, freshState };
+  root.Store = { STATUSES, get, load, save, update, subscribe, exportJson, importJson, statusLabel, freshState, normalize };
 })(window);

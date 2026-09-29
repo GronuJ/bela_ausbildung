@@ -6,26 +6,23 @@ Ein kleines Web-Tool für Bela: Ausbildungen zum Erzieher (und verwandte Wege wi
 
 | Bereich | Wozu |
 | --- | --- |
-| **Übersicht** | Was steht an? Fristen-Radar, Top 3 aus dem Ranking, nächste Aufgaben, Stand der Unterlagen. Termine lassen sich als `.ics` in den Handy-Kalender übernehmen. |
-| **Karte** | Schulen und Kita-Träger auf OpenStreetMap, filterbar nach Beruf und Ausbildungsform. Wohnort per Adresse oder Klick setzen, dann stimmen die Entfernungen. Optional eine Ebene mit Kitas, Horten usw. als mögliche Praxisstellen, filterbar nach Träger, Art und Konzept. |
-| **Ranking** | Jedes Angebot bekommt 0–100 Punkte. Mit Schiebereglern einstellen, was wichtig ist (Vergütung, Kosten, Nähe, Dauer, Einstieg, Abschluss, Bauchgefühl); die Reihenfolge ändert sich sofort. |
-| **Bewerbungen** | Kanban-Board (per Drag & Drop) oder Liste: Status, Frist, Gesprächstermin, Ansprechpartner, Unterlagen je Bewerbung, Sterne, Notizen und automatischer Verlauf. |
-| **Aufgaben** | To-dos mit Fälligkeit und eine Checkliste der Bewerbungsunterlagen. |
-| **Geld** | Gehalts- und Kostenrechner: PiA vs. schulische Wege (BAföG, Schulgeld, Kindergeld) als Netto-Summe über mehrere Jahre, alle Werte anpassbar. |
-| **Plan B** | Schulabschluss angeben und sehen, welche Wege direkt offen sind, welche mit Bedingung, und wohin sie führen. |
-| **Infos** | Begriffe erklärt, Zugangswege, Fristen, Vergütung, Förderung, jeweils mit Quelle. |
+| **Start** | Was als Nächstes ansteht, die 3 besten Treffer aus dem Ranking und die Checkliste der Unterlagen. |
+| **Ranking** | Vier Schieberegler (Geld, Nähe, Schnell fertig, Leichter Einstieg); die Reihenfolge ändert sich sofort. |
+| **Karte** | Schulen und Kita-Träger rund um Kiel. Auf Wunsch auch Kitas als Praxisstellen, filterbar nach Träger und Konzept. |
+| **Bewerbungen** | Board mit fünf Spalten (Interessant, Beworben, Gespräch, Zusage, Absage), Karten per Drag & Drop oder Antippen verschieben. |
+| **Mehr** | Geld (PiA oder Schule im Vergleich), Plan B (welche Wege zum Schulabschluss passen) und die Datensicherung. |
 
-Alle eigenen Daten bleiben im Browser (`localStorage`). Über „Sicherung herunterladen“ im Fußbereich lässt sich alles als JSON sichern und auf einem anderen Gerät wieder laden.
+Alle eigenen Daten bleiben im Browser (`localStorage`). Unter „Mehr“ lässt sich alles als Datei sichern und auf einem anderen Gerät wieder laden.
 
 ## Starten
 
-Einfach `index.html` im Browser öffnen, das reicht. Für die installierbare App (Offline-Modus) braucht es einen Webserver:
+Online unter https://gronuj.github.io/bela_ausbildung/ (GitHub Pages aus `main`). Lokal reicht es, `index.html` im Browser zu öffnen. Für die installierbare App (Offline-Modus) braucht es einen Webserver:
 
 ```bash
 npm start          # http://localhost:8080
 ```
 
-Am einfachsten für Bela: GitHub Pages für dieses Repository einschalten (Settings → Pages → Branch `main`, Ordner `/`). Dann kann er die Seite auf dem Handy öffnen und über „Zum Home-Bildschirm“ wie eine App installieren.
+Auf dem Handy die Seite öffnen und „Zum Home-Bildschirm“ wählen, dann läuft sie wie eine App.
 
 ## Daten pflegen
 

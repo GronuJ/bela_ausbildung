@@ -1,6 +1,6 @@
 /* Service Worker: App offline nutzbar machen. Eigene Dateien: erst Cache, im Hintergrund aktualisieren.
  * Kartenkacheln: aus dem Cache, wenn schon einmal geladen (begrenzte Anzahl). */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const APP_CACHE = 'app-' + VERSION;
 const TILE_CACHE = 'tiles-' + VERSION;
 const MAX_TILES = 1500;
