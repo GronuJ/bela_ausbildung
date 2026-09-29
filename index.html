@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Belas Ausbildungsplaner Kiel</title>
+  <meta name="description" content="Bewerbungen für eine Ausbildung zum Erzieher (und verwandte Berufe) in Kiel planen, vergleichen und verfolgen.">
+  <link rel="stylesheet" href="vendor/leaflet/leaflet.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="theme-color" content="#1f6f8b">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">🧸</span>
+      <span class="brand-text">Ausbildungsplaner <small>Kiel</small></span>
+    </div>
+    <nav class="tabs" aria-label="Bereiche">
+      <a href="#start" data-route="start">Übersicht</a>
+      <a href="#karte" data-route="karte">Karte</a>
+      <a href="#ranking" data-route="ranking">Ranking</a>
+      <a href="#bewerbungen" data-route="bewerbungen">Bewerbungen</a>
+      <a href="#aufgaben" data-route="aufgaben">Aufgaben</a>
+      <a href="#geld" data-route="geld">Geld</a>
+      <a href="#planb" data-route="planb">Plan B</a>
+      <a href="#infos" data-route="infos">Infos</a>
+    </nav>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <div id="modal-root"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <footer class="footer">
+    <span>Deine Daten bleiben nur in diesem Browser gespeichert.</span>
+    <button type="button" class="linkish" data-action="export">Sicherung herunterladen</button>
+    <label class="linkish">Sicherung laden<input type="file" accept="application/json,.json" data-action="import" hidden></label>
+  </footer>
+
+  <script src="vendor/leaflet/leaflet.js"></script>
+  <script src="data/ausbildungsstaetten.js"></script>
+  <script src="data/kitas.js"></script>
+  <script src="data/finanzen.js"></script>
+  <script src="data/planb.js"></script>
+  <script src="js/util.js"></script>
+  <script src="js/ranking.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/tracker.js"></script>
+  <script src="js/pages.js"></script>
+  <script src="js/rechner.js"></script>
+  <script src="js/planb.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
