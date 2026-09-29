@@ -1,0 +1,13 @@
+{
+  "name": "ausbildungsplaner-kiel",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bewerbungen für eine Ausbildung zum Erzieher und verwandte Berufe in Kiel planen, vergleichen und verfolgen.",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/serve.mjs",
+    "build:data": "node tools/build-data.mjs",
+    "test": "node --test \"test/*.test.js\""
+  },
+  "license": "MIT"
+}
