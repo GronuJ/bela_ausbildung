@@ -16,14 +16,14 @@
   }
   function wertInfo(key) { return F().werte.find((x) => x.key === key) || null; }
 
-  /* Einkommensteuer nach § 32a EStG, Tarif 2025 (Grundtabelle, Steuerklasse I, ohne Kirchensteuer/Soli). */
+  /* Einkommensteuer nach § 32a EStG, Tarif 2026 (Grundtabelle, Steuerklasse I, ohne Kirchensteuer/Soli). */
   function einkommensteuer(zvE) {
     const x = Math.floor(zvE);
-    if (x <= 12096) return 0;
-    if (x <= 17443) { const y = (x - 12096) / 10000; return Math.floor((932.30 * y + 1400) * y); }
-    if (x <= 68480) { const z = (x - 17443) / 10000; return Math.floor((176.64 * z + 2397) * z + 1015.13); }
-    if (x <= 277825) return Math.floor(0.42 * x - 10911.92);
-    return Math.floor(0.45 * x - 19246.67);
+    if (x <= 12348) return 0;
+    if (x <= 17799) { const y = (x - 12348) / 10000; return Math.floor((914.51 * y + 1400) * y); }
+    if (x <= 69878) { const z = (x - 17799) / 10000; return Math.floor((173.10 * z + 2397) * z + 1034.87); }
+    if (x <= 277825) return Math.floor(0.42 * x - 11135.63);
+    return Math.floor(0.45 * x - 19470.38);
   }
 
   // Grobes Monatsnetto aus Brutto: Sozialabgaben-Anteil + Lohnsteuer auf das Jahr gerechnet.
@@ -35,35 +35,39 @@
   }
 
   function defaultSzenarien() {
-    const pia = [wert('pia_j1'), wert('pia_j2'), wert('pia_j3')];
-    const erz = wert('erzieher_start');
-    const spa = wert('spa_start');
-    const aufstieg = wert('aufstiegsbafoeg_unterhalt');
-    const schueler = wert('schuelerbafoeg_eigene_wohnung');
-    const n = (v) => (typeof v === 'number' ? v : 0);
+    const n = (key) => wert(key) || 0;
     return [
       {
         id: uid(), name: 'PiA: Erzieher/in praxisintegriert',
         phasen: [
-          { label: 'PiA 1. Jahr', monate: 12, typ: 'brutto', betrag: n(pia[0]), kosten: 0 },
-          { label: 'PiA 2. Jahr', monate: 12, typ: 'brutto', betrag: n(pia[1]), kosten: 0 },
-          { label: 'PiA 3. Jahr', monate: 12, typ: 'brutto', betrag: n(pia[2]), kosten: 0 },
-          { label: 'Job als Erzieher/in', monate: 999, typ: 'brutto', betrag: n(erz), kosten: 0, job: true }
+          { label: 'PiA 1. Jahr', monate: 12, typ: 'brutto', betrag: n('pia_j1'), kosten: 0 },
+          { label: 'PiA 2. Jahr', monate: 12, typ: 'brutto', betrag: n('pia_j2'), kosten: 0 },
+          { label: 'PiA 3. Jahr', monate: 12, typ: 'brutto', betrag: n('pia_j3'), kosten: 0 },
+          { label: 'Job als Erzieher/in', monate: 999, typ: 'brutto', betrag: n('erzieher_start'), kosten: 0, job: true }
         ]
       },
       {
-        id: uid(), name: 'SPA + Erzieher/in in Vollzeit (Schule)',
+        id: uid(), name: 'SPA (Schule) + Erzieher/in Vollzeit',
         phasen: [
-          { label: 'SPA-Ausbildung (Schüler-BAföG?)', monate: 24, typ: 'netto', betrag: 0, kosten: 0 },
-          { label: 'Fachschule Erzieher/in (Aufstiegs-BAföG)', monate: 24, typ: 'netto', betrag: n(aufstieg), kosten: 0 },
-          { label: 'Job als Erzieher/in', monate: 999, typ: 'brutto', betrag: n(erz), kosten: 0, job: true }
+          { label: 'SPA, Schüler-BAföG (bei den Eltern)', monate: 24, typ: 'netto', betrag: n('schuelerbafoeg_eltern'), kosten: 0 },
+          { label: 'Erzieher-Fachschule, Aufstiegs-BAföG', monate: 24, typ: 'netto', betrag: n('aufstiegsbafoeg_unterhalt_ohne_kv'), kosten: 0 },
+          { label: 'Job als Erzieher/in', monate: 999, typ: 'brutto', betrag: n('erzieher_start'), kosten: 0, job: true }
         ]
       },
       {
-        id: uid(), name: 'SPA, dann direkt arbeiten',
+        id: uid(), name: 'SPA-PiA + Erzieher/in Vollzeit',
         phasen: [
-          { label: 'SPA-Ausbildung (eigene Wohnung, Schüler-BAföG)', monate: 24, typ: 'netto', betrag: n(schueler), kosten: 0 },
-          { label: 'Job als Sozialpäd. Assistent/in', monate: 999, typ: 'brutto', betrag: n(spa), kosten: 0, job: true }
+          { label: 'SPA-PiA 1. Jahr', monate: 12, typ: 'brutto', betrag: n('spa_pia_j1'), kosten: 0 },
+          { label: 'SPA-PiA 2. Jahr', monate: 12, typ: 'brutto', betrag: n('spa_pia_j2'), kosten: 0 },
+          { label: 'Erzieher-Fachschule, Aufstiegs-BAföG', monate: 24, typ: 'netto', betrag: n('aufstiegsbafoeg_unterhalt_ohne_kv'), kosten: 0 },
+          { label: 'Job als Erzieher/in', monate: 999, typ: 'brutto', betrag: n('erzieher_start'), kosten: 0, job: true }
+        ]
+      },
+      {
+        id: uid(), name: 'SPA (Schule), dann direkt arbeiten',
+        phasen: [
+          { label: 'SPA, Schüler-BAföG (bei den Eltern)', monate: 24, typ: 'netto', betrag: n('schuelerbafoeg_eltern'), kosten: 0 },
+          { label: 'Job als Sozialpäd. Assistent/in', monate: 999, typ: 'brutto', betrag: n('spa_start'), kosten: 0, job: true }
         ]
       }
     ];
@@ -74,7 +78,7 @@
     if (!st.rechner || !Array.isArray(st.rechner.szenarien)) {
       st.rechner = {
         jahre: 5,
-        svProzent: wert('sv_anteil_prozent') || 21,
+        svProzent: wert('sv_anteil_prozent') || 21.15,
         kindergeld: false,
         szenarien: defaultSzenarien()
       };
@@ -185,7 +189,7 @@
             ${w.gueltig_ab ? `<span class="muted">(gültig ab ${root.Util.formatDate(w.gueltig_ab)})</span>` : ''}
             ${w.hinweis ? `<br><small class="muted">${esc(w.hinweis)}</small>` : ''}</span>
             ${w.quelle ? `<a class="source" href="${esc(w.quelle)}" target="_blank" rel="noopener">Quelle</a>` : ''}</li>`).join('')}</ul>
-        <p class="muted" style="margin-top:8px">Netto ist eine grobe Schätzung: Brutto minus Sozialabgaben-Anteil minus Lohnsteuer (Steuerklasse I, Tarif 2025, ohne Kirchensteuer). BAföG-Beträge hängen vom Einkommen der Eltern und deiner Wohnsituation ab, eine verbindliche Auskunft gibt das BAföG-Amt. Für eine Phase ohne Monatsangabe gilt „bis zum Ende des Zeitraums“.</p>
+        <p class="muted" style="margin-top:8px">Netto ist eine grobe Schätzung: Brutto minus Sozialabgaben-Anteil minus Lohnsteuer (Steuerklasse I, Tarif 2026, ohne Kirchensteuer). BAföG-Beträge hängen vom Einkommen der Eltern und deiner Wohnsituation ab, eine verbindliche Auskunft gibt das BAföG-Amt. Für eine Phase ohne Monatsangabe gilt „bis zum Ende des Zeitraums“.</p>
       </section>`;
   }
 

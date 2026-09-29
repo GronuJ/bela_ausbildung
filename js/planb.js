@@ -15,11 +15,12 @@
     let ton = 'warn', label = 'mit Bedingung';
     if (!t) { ton = ''; label = 'unklar'; }
     else if (/^ja\b/.test(lower)) { ton = 'good'; label = 'passt'; }
+    else if (/^unklar\b/.test(lower)) { ton = ''; label = 'unklar'; }
     else if (/^nein\b/.test(lower)) {
       ton = 'bad'; label = 'noch nicht';
       if (profil.ausbildung && /ausbildung/.test(lower)) { ton = 'warn'; label = 'evtl. mit deiner Ausbildung'; }
     }
-    return { ton, label, text: t.replace(/^(ja|nein)\b[:,.]?\s*/i, '') };
+    return { ton, label, text: t.replace(/^(ja|nein|mit Bedingung|unklar)\b\s*[:,.–-]?\s*/i, '') };
   }
 
   function card(p, profil, compact) {

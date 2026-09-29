@@ -131,7 +131,7 @@
         </div>
         ${kl.an ? `
         <div class="row"><b style="min-width:90px">Träger</b> ${checkboxGroup('kita-traeger', kitaValues('traeger_gruppe'), kl.traeger)}</div>
-        <div class="row"><b style="min-width:90px">Art</b> ${checkboxGroup('kita-typ', kitaValues('typ'), kl.typ)}</div>
+        <div class="row"><b style="min-width:90px">Einrichtung</b> ${checkboxGroup('kita-typ', kitaValues('typ'), kl.typ)}</div>
         ${kitaValues('konzept').length ? `<div class="row"><b style="min-width:90px">Konzept</b> ${checkboxGroup('kita-konzept', kitaValues('konzept'), kl.konzept)}</div>` : ''}
         <div class="muted">${kitas.length} Kitas passen. Kleine Punkte auf der Karte.${K().quelle ? ` Quelle: <a href="${esc(K().quelle)}" target="_blank" rel="noopener">Datensatz</a>${K().lizenz ? ' (' + esc(K().lizenz) + ')' : ''}` : ''}</div>` : ''}` : ''}
         <div class="row">

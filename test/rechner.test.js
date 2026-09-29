@@ -6,15 +6,21 @@ const FINANZEN_DATA = { werte: [{ key: 'kindergeld', wert: 250 }] };
 const w = loadScripts(['js/util.js', 'js/rechner.js'], { FINANZEN_DATA });
 const { Rechner } = w;
 
-test('Einkommensteuer 2025: Grundfreibetrag steuerfrei, danach Progression', () => {
-  assert.equal(Rechner.einkommensteuer(12096), 0);
+test('Einkommensteuer 2026: Grundfreibetrag steuerfrei, danach Progression', () => {
+  assert.equal(Rechner.einkommensteuer(12348), 0);
   assert.ok(Rechner.einkommensteuer(20000) > 1000 && Rechner.einkommensteuer(20000) < 2000);
   assert.ok(Rechner.einkommensteuer(40000) > Rechner.einkommensteuer(30000));
 });
 
-test('Azubi-Vergütung: fast keine Lohnsteuer, nur Sozialabgaben', () => {
-  const net = Rechner.nettoAusBrutto(1400, 21);
-  assert.ok(net > 1400 * 0.77 && net <= 1400 * 0.79 + 0.01, String(net));
+test('bis ca. 1.426 € brutto keine Lohnsteuer (Steuerklasse I, 2026)', () => {
+  assert.equal(Math.round(Rechner.nettoAusBrutto(1420, 21.15) * 100) / 100, Math.round(1420 * (1 - 0.2115) * 100) / 100);
+  assert.ok(Rechner.nettoAusBrutto(1653.38, 21.15) < 1653.38 * (1 - 0.2115));
+});
+
+test('Netto-Schätzung liegt nah an den recherchierten Vergleichswerten', () => {
+  // Vergleichswerte aus data/finanzen.json (BMF-Lohnsteuerrechner 2026): PiA 1. Jahr ~1.166,75 €, Erzieher Einstieg ~2.353,44 €
+  assert.ok(Math.abs(Rechner.nettoAusBrutto(1490.69, 21.15) - 1166.75) < 25);
+  assert.ok(Math.abs(Rechner.nettoAusBrutto(3509.44, 21.15) - 2353.44) < 60);
 });
 
 test('Simulation summiert Phasen über den Zeitraum und erkennt den Berufsstart', () => {
